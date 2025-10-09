@@ -1,10 +1,13 @@
 # OpenTelemetry Gradle Plugin
 
-This Gradle Plugin automatically implements OpenTelemetry tracing using code instrumentation.
+This Gradle Plugin automatically instruments code to generate and export OpenTelemetry-compliant traces.  
+Each function call generates one span while nested function calls preserve the function call hierarchy by propagating span context.
 
 ## Usage
 
-Add the following to your plugins.
+Note: The plugin and its dependencies are not published in any maven repository, requiring a local publish and installation using `mavenLocal()`.
+
+Add the following plugin to your `build.gradle.kts`.
 ```kotlin
 id("com.infendro.otel") version "1.0.0"
 ```
@@ -12,25 +15,28 @@ id("com.infendro.otel") version "1.0.0"
 And configure the plugin using the following.
 ```kotlin
 otel {
-    enabled = true             // optional, default is true
-    debug = true               // optional, default is false
-    host = "localhost:4318"    // required
-    service = "plugin"         // required
+    // whether the plugin is applied
+    // optional, default = true
+    enabled = true
+    // enables additional terminal output
+    // optional, default = false
+    debug = true
+    // the OpenTelemetry collector host
+    // required
+    host = "localhost:4318"
+    // the OpenTelemetry service (used for identifying the source of spans)
+    // required
+    service = "plugin"
 }
 ```
 
-Add the following to your common dependencies.
-```kotlin
-implementation("com.infendro.otel:util:1.0.0")
-implementation("com.infendro.otel:otlp-exporter:1.0.0")
-implementation("io.opentelemetry.kotlin.api:all:1.0.570")
-implementation("io.opentelemetry.kotlin.sdk:sdk-trace:1.0.570")
-implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-```
+All required dependencies are automatically added to the common source set.  
+These dependencies include the plugin's utility library (providing essential functions), the [OTLP exporter](https://github.com/FabianSchoenberger/otlp-exporter), the [KMP OpenTelemetry port](https://github.com/dcxp/opentelemetry-kotlin), and Kotlin's coroutines.  
+Of these, the utility library and exporter need to be published locally.
 
-## Test
+## Tests
 
 The tests require the OpenTelemetry Collector to be running and accessible at `localhost:4318`.
 
-Run the tests using the following in the `plugin` module. \
+Run the tests using the following in the `plugin` module.  
 `./gradlew :test --tests "com.infendro.otel.plugin.PluginTest"`
