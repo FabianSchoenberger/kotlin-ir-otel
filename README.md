@@ -1,7 +1,9 @@
-# OpenTelemetry Gradle Plugin
+# OpenTelemetry Compiler Plugin
 
-This Gradle Plugin automatically instruments code to generate and export OpenTelemetry-compliant traces.  
+This Compiler Plugin automatically instruments Kotlin (Multiplatform) code to generate and export OpenTelemetry-compliant traces.  
 Each function call generates one span while nested function calls preserve the function call hierarchy by propagating span context.
+
+The plugin supports targets including JVM, JavaScript and Native (Linux).
 
 ## Usage
 
